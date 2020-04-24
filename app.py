@@ -10,6 +10,7 @@ from flask_jwt_extended import jwt_required, get_jti
 import sqlite3
 from flask_restful import Resource, reqparse
 from user import resources
+import logging as logger
 
 app = Flask(__name__)
 api = Api(app)
@@ -22,7 +23,6 @@ cursor = connection.cursor()
 
 
 parser_linker = reqparse.RequestParser()
-
 parser_linker_post = reqparse.RequestParser()
 parser_linker_post.add_argument('link', help='Something went wrong', required=True)
 parser_linker_post.add_argument('X-Access-Token', type=str, location='headers', required=True)
@@ -67,13 +67,18 @@ def VerifyJwt(token):
 class urllinker(Resource):
 
     def get(self, id):
-        redirect_url = connection.execute('SELECT URL FROM URLS WHERE ID = ' + str(base62decode(id)) + ';')
-        url = ""
+        try:
+            redirect_url = connection.execute('SELECT URL FROM URLS WHERE ID = ' + str(base62decode(id)) + ';')
+            url = ""
 
-        for x in redirect_url:
-            url = x[0]
-        print(url)
-        return redirect(url, code=301)
+            for x in redirect_url:
+                url = x[0]
+            if url == "":
+                return {"message": "404. ID not found"}, 404
+            else:
+                return redirect(url, code=301)
+        except Exception as e:
+            return {}, 404
 
     def put(self, id):
         data = parser_linker_post.parse_args()
@@ -140,20 +145,24 @@ class urllinkerpost(Resource):
     def delete(self):
         data = parser_linker_post.parse_args()
         if VerifyJwt(data['X-Access-Token']):
-            connection.execute('TRUNCATE TABLE URLS;')
+            connection.execute('DELETE FROM URLS;')
             return "", 204
         else:
             return {"msg": "The resource is forbidden"}, 403
 
     def get(self):
-        try:
-            redirect_url = connection.execute('SELECT URL FROM URLS;')
-            url = []
-            for x in redirect_url:
-                url.append(x[0])
-            return {"id": url, "status": 301}, 301
-        except Exception as e:
-            return {}, 404
+        data = parser_linker_post.parse_args()
+        if VerifyJwt(data['X-Access-Token']):
+            try:
+                redirect_url = connection.execute('SELECT URL FROM URLS;')
+                url = []
+                for x in redirect_url:
+                    url.append(x[0])
+                return {"id": url, "status": 200}, 200
+            except Exception as e:
+                return {}, 404
+        else:
+            return {"msg": "The resource is forbidden", "status": 403}, 403
 
 
 api.add_resource(urllinker, '/<string:id>')
