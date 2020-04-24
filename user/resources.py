@@ -7,6 +7,7 @@ parser = reqparse.RequestParser()
 parser.add_argument('username', help='This field cannot be blank', required=True)
 parser.add_argument('password', help='This field cannot be blank', required=True)
 
+
 cache_db = {}
 
 
@@ -44,4 +45,20 @@ class UserLogin(Resource):
             return {'message': 'Logged in as {}'.format(data['username']), 'access_token': access_token}, 200
         else:
             return {'message': 'Forbidden'}, 403
+
+
+class JwtVerify(Resource):
+    @jwt_required
+    def post(self):
+        current_user = get_jwt_identity()
+        print(current_user)
+        try:
+            exists = cache_db[current_user]
+        except KeyError:
+            exists = ""
+        if not exists:
+            return {'code':0}
+        else:
+            return {'code': 1}
+
 

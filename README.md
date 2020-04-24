@@ -45,6 +45,7 @@ Request
 ````
 curl --location --request POST 'http://0.0.0.0:5000/' \
 --header 'Content-Type: application/json' \
+--header 'X-Access-Token: TOKEN' \
 --data-raw '{
                         "link":"https://example.com"
 	
@@ -80,6 +81,7 @@ Request
 ````
 curl --location --request PUT 'http://0.0.0.0:5000/:id_to_be_changed' \
 --header 'Content-Type: application/json' \
+--header 'X-Access-Token: TOKEN' \
 --data-raw '{
                         "link":"https://example.com"
 	
@@ -101,6 +103,7 @@ Request
 ````
 curl --location --request DELETE 'http://0.0.0.0:5000/:id_to_delete' \
 --header 'Content-Type: application/json' \
+--header 'X-Access-Token: TOKEN' \
 --data-raw ''
 ````
 
