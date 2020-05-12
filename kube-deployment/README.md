@@ -1,13 +1,12 @@
 # Web Services and Cloud-Based Systems - Assignment 3.2 (Kubernetes deployment of web services)
 ## Group 16 (Neeraj, Prashanth, Vignesh)
 
-Deployment of both URL shortener web service and Login web service on the Kube cluster. As a bonus, we implemented the Nginx proxy where
-only one entry point can be used to access both services.
+Deployment of both URL shortener web service and Login web service on the Kube cluster. As a bonus, we implemented the Nginx proxy, where only one entry point can be used to access both services.
 
 To deploy the services, we need to push the docker containers from Assignment 3.1 to the docker hub. We created all three images for the
-services URL-shortener, Login web service, and One entry point service.
+services URL-shortener, Login web service, and One entry point service. Docker is automatically selected as the container run time by the Kubernetes and kubeadm pickups it up by scanning well-known UNIX domain sockets.
 
-`url-shortner -> neerajs1995/url-shortner:tagname`
+`url-shortner -> neerajs1995/url-shortner`
 
  https://hub.docker.com/repository/docker/neerajs1995/url-shortner
 
@@ -19,15 +18,15 @@ https://hub.docker.com/repository/docker/neerajs1995/authenticator
 
 https://hub.docker.com/repository/docker/neerajs1995/assignment2
 
-This is the architecture of Kubernetes deployment we deployed
+The architecture we used for the deployment of web services.
 
 ![Kubernetes architechture](https://raw.githubusercontent.com/cymtrick/url-shortner-python/master/kube-deployment/photo_2020-05-12%2014.52.09.jpeg)
 
-          [1] client connects to the load balancer via a public IP address
+                  [1]Figure: the client connects to the load balancer via a public IP address
           
-kubeadm is used to manage the clusters. We have one master node (145.100.131.111) and two worker nodes (145.100.131.141,145.100.131.148).
+kubeadm is used to manage the clusters. We have one master node (145.100.131.111) and two worker nodes (145.100.131.141,145.100.131.148). To initiate the master and worker nodes, we need some pre configurations to complete [2]. 
 
-For iptables to see the bridged traffic we need to set `net.bridge.bridge-nf-call-iptables` is set to `1` in sysctl config.
+For iptables to see the bridged traffic, we need to set [2] `net.bridge.bridge-nf-call-iptables` is set to `1` in sysctl config.
 
 ````bash
 cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
@@ -49,7 +48,7 @@ After initiating the kubeadm, we get the token and discovery token hash in this 
 
 `kubeadm join --token <token> <control-plane-host>:<control-plane-port> --discovery-token-ca-cert-hash sha256:<hash>`
 
-Worker nodes can be joined using the above command. After entering the nodes, we check for it.
+Worker nodes can be joined using the above command. Master VM can be used for worker node using the taint command, but we did not choose that. After entering the nodes, checking nodes can be done through the following commands.
 
 ````bash
 student11@edu0-vm-11:~$ kubectl get nodes
@@ -61,8 +60,7 @@ edu0-vm-48   Ready                      <none>   27h    v1.18.2
 
 ### Deploying the Pods
 
-
-Common YAML used for deploying the pods and services of all three services.
+To deploy the pods a the images need to be pulled from the docker hub. A service needs to applied with the name of service, and it should target the container port. Following YAML is used for the configuration of three services.
 
 ````yaml
 kind: Service
@@ -100,9 +98,13 @@ spec:
         - containerPort: {containerPort}
 ````
 
-After applying the configuration, a cluster IP is assigned to the container. This can be accessed internally. But to allocate for the external network, we need an ingress controller or load balancer. This is the YAML for the load balancer regarding all three services.
+kubectl is used to deploy the pods on worker nodes
 
-````
+`$ kubectl apply -y NAME-OF-THE-SERVICE.yaml`
+
+After applying the service configuration and deploying pods, a cluster IP is assigned to the container. This can be accessed internally. But to allocate for the external network, we need an ingress controller or load balancer. This is the YAML for the load balancer regarding all three services.
+
+````yaml
 kind: Service
 apiVersion: v1
 metadata:
@@ -147,4 +149,6 @@ ngnix entry point for both services -> http://145.100.131.111:8000
 
 References:
 
-[1] https://medium.com/google-cloud/understanding-kubernetes-networking-ingress-1bc341c84078
+[1] Understanding kubernetes networking: ingress https://medium.com/google-cloud/understanding-kubernetes-networking-ingress-1bc341c84078 Accessed: 12.05.2020
+
+[2] Installing kubeadm https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/ Accessed: 12.05.2020
