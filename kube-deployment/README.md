@@ -137,6 +137,12 @@ kubernetes-dashboard   service/dashboard-metrics-scraper   ClusterIP      10.107
 kubernetes-dashboard   service/kubernetes-dashboard        ClusterIP      10.111.181.210   <none>            443/TCP                  3d2h   k8s-app=kubernetes-dashboard
 ````
 
-Refernces:
+
+url_shortener web service -> http://145.100.131.111
+login web service -> http://145.100.131.111:81
+ngnix entry point for both services -> http://145.100.131.111
+
+
+References:
 
 [1] https://medium.com/google-cloud/understanding-kubernetes-networking-ingress-1bc341c84078
