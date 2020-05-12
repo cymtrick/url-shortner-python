@@ -1,0 +1,33 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: url-shortner-auth
+spec:
+  selector:
+    app: url-shortner-auth
+  ports:
+  - protocol: "TCP"
+    port: 81
+    targetPort: 5000
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: url-shortner-auth
+spec:
+  selector:
+    matchLabels:
+      app: url-shortner-auth
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: url-shortner-auth
+    spec:
+      containers:
+      - name: url-shortner-auth
+        image: neerajs1995/authenticator
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000

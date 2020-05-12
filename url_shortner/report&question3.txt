@@ -1,0 +1,14 @@
+Design and implementation of URL shortner
+
+As rest was stated to be used. We choose the flask framework and the library called flask-restful services.
+For the URL Shortening service, we used the base62 encode and decode.
+The URL is stored in the temporary sqlite3 database along with an id and when it restarts the state of memory resets.
+URL correctness is verified using the base62 decode function. All the methods GET, POST, PUT and DELETE are implemented for both '/' and '/:id' endpoints.
+
+
+Answer for question 3 :
+
+
+A simple authentication mechanism can be used when the URL shortener service is used.
+A unique hash can be given to the user which can he use along with URL input.
+The best example for this is the linkshim mechanism used by Facebook.
