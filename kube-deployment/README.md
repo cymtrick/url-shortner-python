@@ -140,12 +140,6 @@ kubernetes-dashboard   service/kubernetes-dashboard        ClusterIP      10.111
 ````
 
 
-url_shortener web service -> http://145.100.131.111
-
-login web service -> http://145.100.131.111:81
-
-ngnix entry point for both services -> http://145.100.131.111:8000
-
 
 References:
 
