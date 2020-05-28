@@ -24,7 +24,7 @@ The architecture we used for the deployment of web services.
 
                   [1]Figure: the client connects to the load balancer via a public IP address
           
-kubeadm is used to manage the clusters. We have one master node (145.100.131.111) and two worker nodes (145.100.131.141,145.100.131.148). To initiate the master and worker nodes, we need some pre configurations to complete [2]. 
+kubeadm is used to manage the clusters. We have one master node (1) and two worker nodes (). To initiate the master and worker nodes, we need some pre configurations to complete [2]. 
 
 For iptables to see the bridged traffic, we need to set [2] `net.bridge.bridge-nf-call-iptables` is set to `1` in sysctl config.
 
@@ -37,7 +37,7 @@ EOF
 
 The master node is initiated using.
 
-`$ sudo kubeadm init --pod-network-cidr=10.0.0.0/24 --apiserver-advertise-address=10.0.0.111 --apiserver-cert-extra-sans=145.100.131.111 --ignore-preflight-errors Swap
+`$ sudo kubeadm init --pod-network-cidr=10.0.0.0/24 --apiserver-advertise-address=10.0.0.111 --apiserver-cert-extra-sans= --ignore-preflight-errors Swap
 `
 
 For third-party network addon, we used the Calcio networking and network policy, provider. Calcio takes the --pod-network-cidr mentioned in the kubeadm init
@@ -140,11 +140,6 @@ kubernetes-dashboard   service/kubernetes-dashboard        ClusterIP      10.111
 ````
 
 
-url_shortener web service -> http://145.100.131.111
-
-login web service -> http://145.100.131.111:81
-
-ngnix entry point for both services -> http://145.100.131.111:8000
 
 
 References:
