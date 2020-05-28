@@ -139,9 +139,6 @@ kubernetes-dashboard   service/dashboard-metrics-scraper   ClusterIP      10.107
 kubernetes-dashboard   service/kubernetes-dashboard        ClusterIP      10.111.181.210   <none>            443/TCP                  3d2h   k8s-app=kubernetes-dashboard
 ````
 
-
-
-
 References:
 
 [1] Understanding kubernetes networking: ingress https://medium.com/google-cloud/understanding-kubernetes-networking-ingress-1bc341c84078 Accessed: 12.05.2020
